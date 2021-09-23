@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # teaching_assistant
 
 A new Flutter project.
@@ -17,4 +16,3 @@ For help getting started with Flutter, view our
 samples, guidance on mobile development, and a full API reference.
 =======
 # teacher-assistant
->>>>>>> 565e07cc0fce4a94d59d3b8d820298eddb7603b3
