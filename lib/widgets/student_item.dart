@@ -1,28 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import 'package:teaching_assistant/providers/student.dart';
 
 class StudentItem extends StatelessWidget {
   final String fullName;
   final String id;
+  final int powerCardNum;
 
   StudentItem({
+    required this.powerCardNum,
     required this.fullName,
     required this.id,
   });
 
   @override
   Widget build(BuildContext context) {
-    final student = Provider.of<Student>(context);
-
     return GridTile(
       child: Card(
         elevation: 7,
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            vertical: 10,
-            horizontal: 10,
+            vertical: 40,
+            horizontal: 20,
           ),
           child: Text(
             fullName,
@@ -35,35 +32,26 @@ class StudentItem extends StatelessWidget {
         ),
       ),
       footer: SizedBox(
-        height: 80,
+        height: 90,
         width: double.infinity,
-        child: Row(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            IconButton(
-              onPressed: () {
-                student.decreaseCard();
-              },
-              icon: const Icon(
-                Icons.remove,
-                color: Colors.red,
-              ),
-            ),
             Text(
-              student.powerCardNum.toString(),
+              powerCardNum.toString(),
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 40,
+                fontSize: 32,
               ),
             ),
-            IconButton(
-              onPressed: () {
-                student.increaseCard();
-              },
-              icon: const Icon(
-                Icons.add,
-                color: Colors.green,
+            const Text(
+              "Cards",
+              style: TextStyle(
+                fontSize: 20,
               ),
+            ),
+            const SizedBox(
+              height: 20,
             ),
           ],
         ),
