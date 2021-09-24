@@ -1,80 +1,125 @@
-// import 'package:flutter/material.dart';
-// import 'package:provider/provider.dart';
-// import 'package:teaching_assistant/providers/student.dart';
-// import 'package:teaching_assistant/widgets/student_item.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:teaching_assistant/models/classroom/class_manager.dart';
+import 'package:teaching_assistant/models/classroom/involve_history.dart';
+import 'package:teaching_assistant/models/classroom/lesson.dart';
+import 'package:teaching_assistant/provider/students_provider.dart';
+import 'package:teaching_assistant/widgets/main_grid_view.dart';
 
-// class StudentOverviewScreen extends StatelessWidget {
-//   final studentList = [
-//     Student(
-//       id: "1",
-//       fullName: "Lê Huy Trường Giang",
-//       powerCardNum: 0,
-//     ),
-//     Student(
-//       id: "2",
-//       fullName: "Nguyễn Phi Vũ",
-//       powerCardNum: 0,
-//     ),
-//     Student(
-//       id: "3",
-//       fullName: "Nguyễn Huy Quân",
-//       powerCardNum: 0,
-//     ),
-//     Student(
-//       id: "4",
-//       fullName: "Phạm Công Nam Sơn",
-//       powerCardNum: 0,
-//     ),
-//     Student(
-//       id: "5",
-//       fullName: "Phạm Đức Hiệp",
-//       powerCardNum: 0,
-//     ),
-//     Student(
-//       id: "6",
-//       fullName: "Tạ Minh Huy",
-//       powerCardNum: 0,
-//     ),
-//     Student(
-//       id: "7",
-//       fullName: "Nguyễn Hoàng Cầm",
-//       powerCardNum: 0,
-//     ),
-//     Student(
-//       id: "8",
-//       fullName: "Nguyễn Hoàng Phúc",
-//       powerCardNum: 0,
-//     ),
-//   ];
+class TeachingScreen extends StatelessWidget {
+  static const String routeName = "/teaching";
 
-//   @override
-//   Widget build(BuildContext context) {
-//     studentList
-//         .sort((std1, std2) => -std1.powerCardNum.compareTo(std2.powerCardNum));
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text("Power Card List"),
-//         centerTitle: true,
-//       ),
-//       body: GridView(
-//         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-//           maxCrossAxisExtent: 300,
-//           crossAxisSpacing: 20,
-//           mainAxisSpacing: 15,
-//         ),
-//         padding: const EdgeInsets.all(30),
-//         children: studentList
-//             .map(
-//               (student) => ChangeNotifierProvider(
-//                 create: (_) => student,
-//                 child: StudentItem(
-//                   fullName: student.fullName,
-//                   id: student.id,
-//                 ),
-//               ),
-//             )
-//             .toList(),
-//       ),
-//     );
-//   }
-// }
+  @override
+  Widget build(BuildContext context) {
+    ClassManager classManager =
+        Provider.of<ClassManager>(context, listen: false);
+    Lesson lesson = classManager.lessonList[classManager.lessonList.length - 1];
+    StudentsProvider studentData = Provider.of<StudentsProvider>(
+      context,
+      listen: false,
+    );
+
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: const Text("ONL-C4K-GB87"),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.chevron_left,
+          ),
+          onPressed: () {
+            Navigator.of(context).pop(lesson.getTopStudentId());
+          },
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Slot num: " + classManager.currentSlot.toString(),
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 28,
+              ),
+            ),
+            Text(
+              "Time: " + DateFormat("dd-MM - hh:mm").format(lesson.date),
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 28,
+              ),
+            ),
+            Expanded(
+              child: MainGridView(
+                children: lesson.involvedList
+                    .map((involving) => ChangeNotifierProvider(
+                          create: (ctx) => involving,
+                          child: GridTile(
+                            child: Card(
+                              elevation: 7,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 40,
+                                  horizontal: 20,
+                                ),
+                                child: Text(
+                                  studentData.nameFromId(involving.id),
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            footer: SizedBox(
+                              height: 90,
+                              width: double.infinity,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      involving.decreasePoint();
+                                    },
+                                    icon: const Icon(
+                                      Icons.remove,
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                  Consumer<InvolveHistory>(
+                                    builder: (ctx, currenInvolve, _) => Text(
+                                      currenInvolve.pointGot.toString(),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 32,
+                                      ),
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      involving.increasePoint();
+                                    },
+                                    icon: const Icon(
+                                      Icons.add,
+                                      color: Colors.green,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ))
+                    .toList(),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
