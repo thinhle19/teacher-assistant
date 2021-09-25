@@ -1,4 +1,4 @@
-# teaching_assistant
+# teacher_assistant
 
 A new Flutter project.
 
